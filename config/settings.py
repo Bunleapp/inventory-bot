@@ -2,6 +2,8 @@
 config/settings.py  ─  Centralised configuration loader
 """
 import os
+import json
+import tempfile
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,8 +18,19 @@ ALLOWED_USER_IDS: set[int] = {
 
 # ── Google Sheets ─────────────────────────────────────────────────────────────
 GOOGLE_SHEET_ID: str = os.getenv("GOOGLE_SHEET_ID", "")
-GOOGLE_CREDENTIALS_PATH: str = os.getenv(
-    "GOOGLE_CREDENTIALS_PATH", "credentials.json")
+
+# Handle credentials for Railway deployment
+# Railway stores credentials as JSON string in environment variable
+_creds_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+if _creds_json:
+    # Running on Railway - create temp file from env variable
+    _temp_creds = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+    _temp_creds.write(_creds_json)
+    _temp_creds.close()
+    GOOGLE_CREDENTIALS_PATH = _temp_creds.name
+else:
+    # Running locally - use file path
+    GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH", "credentials.json")
 
 # Sheet tab names  (change only if you rename the tabs in Google Sheets)
 SHEET_PRODUCTS = "Products"
