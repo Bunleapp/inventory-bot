@@ -4,6 +4,7 @@ config/settings.py  ─  Centralised configuration loader
 import os
 import json
 import tempfile
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,13 +25,26 @@ GOOGLE_SHEET_ID: str = os.getenv("GOOGLE_SHEET_ID", "")
 _creds_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
 if _creds_json:
     # Running on Railway - create temp file from env variable
-    _temp_creds = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
-    _temp_creds.write(_creds_json)
-    _temp_creds.close()
-    GOOGLE_CREDENTIALS_PATH = _temp_creds.name
+    try:
+        # Parse JSON to validate it
+        creds_data = json.loads(_creds_json)
+        
+        # Create temp file
+        _temp_creds = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+        json.dump(creds_data, _temp_creds)
+        _temp_creds.close()
+        GOOGLE_CREDENTIALS_PATH = _temp_creds.name
+        print(f"✓ Using Railway credentials from environment variable")
+    except json.JSONDecodeError as e:
+        print(f"✗ Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON: {e}")
+        raise
 else:
     # Running locally - use file path
     GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH", "credentials.json")
+    if Path(GOOGLE_CREDENTIALS_PATH).exists():
+        print(f"✓ Using local credentials file: {GOOGLE_CREDENTIALS_PATH}")
+    else:
+        print(f"✗ Credentials file not found: {GOOGLE_CREDENTIALS_PATH}")
 
 # Sheet tab names  (change only if you rename the tabs in Google Sheets)
 SHEET_PRODUCTS = "Products"

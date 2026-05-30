@@ -27,6 +27,10 @@ wheels/
 .env
 credentials.json
 *.json.bak
+railway_credentials.txt
+
+# Keep example files
+!.env.example
 
 # Logs
 *.log
