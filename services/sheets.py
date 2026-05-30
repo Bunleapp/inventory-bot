@@ -229,13 +229,15 @@ class SheetsService:
             rows = self._read(SHEET_PRODUCTS)
             pid = self._next_id(rows)
             now = self._now()
+            # Prefix date with single quote to force text format in Google Sheets
+            date_str = f"'{now}"
             self._append(SHEET_PRODUCTS, [
-                         [pid, name, price, cost, quantity, now]])
+                         [pid, name, price, cost, quantity, date_str]])
             # log transaction
             txn_rows = self._read(SHEET_TRANSACTIONS)
             tid = self._next_txn_id(txn_rows)
             self._append(SHEET_TRANSACTIONS, [[
-                tid, now, "ADD_PRODUCT", pid, name, quantity, cost,
+                tid, date_str, "ADD_PRODUCT", pid, name, quantity, cost,
                 "Product added", user_id
             ]])
             self._cache_clear()  # Clear cache to force refresh
@@ -255,9 +257,11 @@ class SheetsService:
                     txn_rows = self._read(SHEET_TRANSACTIONS)
                     tid = self._next_txn_id(txn_rows)
                     now = self._now()
+                    # Prefix date with single quote to force text format
+                    date_str = f"'{now}"
                     name = r[P_NAME] if len(r) > P_NAME else "?"
                     self._append(SHEET_TRANSACTIONS, [[
-                        tid, now, "DELETE_PRODUCT", product_id, name, 0, 0,
+                        tid, date_str, "DELETE_PRODUCT", product_id, name, 0, 0,
                         "Product deleted", user_id
                     ]])
                     self._cache_clear()
@@ -323,8 +327,10 @@ class SheetsService:
             txn_rows = self._read(SHEET_TRANSACTIONS)
             tid = self._next_txn_id(txn_rows)
             now = self._now()
+            # Prefix date with single quote to force text format
+            date_str = f"'{now}"
             self._append(SHEET_TRANSACTIONS, [[
-                tid, now, "STOCK_IN", product_id, prod["name"], qty,
+                tid, date_str, "STOCK_IN", product_id, prod["name"], qty,
                 prod["cost"], note or "Stock in", user_id
             ]])
             self._cache_clear()
@@ -381,9 +387,11 @@ class SheetsService:
             txn_rows = self._read(SHEET_TRANSACTIONS)
             tid = self._next_txn_id(txn_rows)
             now = self._now()
+            # Prefix date with single quote to force text format
+            date_str = f"'{now}"
             price = prod["price"] if txn_type == "SALE" else prod["cost"]
             self._append(SHEET_TRANSACTIONS, [[
-                tid, now, txn_type, product_id, prod["name"], qty,
+                tid, date_str, txn_type, product_id, prod["name"], qty,
                 price, note or txn_type.title(), user_id
             ]])
             self._cache_clear()
