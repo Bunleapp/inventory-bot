@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+
+# Virtual environments
+env
+venv
+ENV
+
+# Sensitive files
+.env
+credentials.json
+railway_credentials.txt
+*.log
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# Documentation (not needed in container)
+*.md
+!README.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build files
+build.sh
