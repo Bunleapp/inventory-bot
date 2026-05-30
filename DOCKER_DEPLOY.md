@@ -61,7 +61,7 @@ Still need to set in Railway:
 
 ```
 TELEGRAM_BOT_TOKEN = your_token
-ALLOWED_USER_IDS = 1330942600,other_ids
+ALLOWED_USER_IDS = YOUR_USER_ID,other_ids
 GOOGLE_SHEET_ID = your_sheet_id
 GOOGLE_APPLICATION_CREDENTIALS_JSON = {your credentials json}
 LOW_STOCK_THRESHOLD = 10
