@@ -10,3 +10,4 @@ cmd = "python main.py"
 
 [variables]
 MISE_PYTHON_GITHUB_ATTESTATIONS = "false"
+PYTHONUNBUFFERED = "1"
